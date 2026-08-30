@@ -30,12 +30,12 @@ with col3:
 st.markdown("---")
 
 # Section 1: Data Governance View
-st.subheader("🔒 Data Governance & Privacy Compliance (Sample)")
+st.subheader("Data Governance & Privacy Compliance (Sample)")
 st.markdown("Showing customer records after Microsoft Presidio PII redaction (APP Compliance):")
 st.dataframe(df[['Name', 'Email', 'Phone', 'IP']].head(10), use_container_width=True)
 
 # Section 2: Fraud Risk Analytics View
-st.subheader("🚨 Fraud & Risk Intelligence")
+st.subheader("Fraud & Risk Intelligence")
 st.markdown("Analyzing form completion speeds to flag automated bot activity or synthetic identities:")
 
 # Filter options for the user
