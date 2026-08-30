@@ -2,30 +2,31 @@ from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 import pandas as pd
 
-# 1. Initialize the Engines
-# The Analyzer "reads" the text to find PII.
-# The Anonymizer "masks" the PII.
+# 1. Initialize Presidio Engines
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
 
 def mask_sensitive_data(text):
-    # Analyze the text to find sensitive information
-    results = analyzer.analyze(text=text, entities=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS"], language='en')
+    # Analyze text to find PII using a balanced confidence threshold
+    results = analyzer.analyze(text=str(text), 
+                               entities=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS"], 
+                               language='en',
+                               score_threshold=0.3)
     
-    # Anonymize (Mask) the found information
-    anonymized_result = anonymizer.anonymize(text=text, analyzer_results=results)
-    
+    anonymized_result = anonymizer.anonymize(text=str(text), analyzer_results=results)
     return anonymized_result.text
 
-# 2. Load our raw data from Phase 1
-df = pd.read_csv('telco_signups.csv')
+# 2. Load the new 50,000-row advanced dataset
+print("Loading 50,000 raw enterprise records...")
+df = pd.read_csv('telco_signups_advanced_fraud.csv')
 
-# 3. Apply the masking to specific columns
-# We process the Name, Email, and Phone columns
+print("Applying Microsoft Presidio PII masking to Name, Email, and Phone columns...")
+# Apply the privacy mask line-by-line
 df['Name'] = df['Name'].apply(mask_sensitive_data)
 df['Email'] = df['Email'].apply(mask_sensitive_data)
 df['Phone'] = df['Phone'].apply(mask_sensitive_data)
 
-# 4. Save the cleaned/masked data
-df.to_csv('telco_signups_masked.csv', index=False)
-print("Privacy layer complete! Saved as 'telco_signups_masked.csv'.")
+# 3. Save the enterprise masked dataset
+output_filename = 'telco_signups_advanced_masked.csv'
+df.to_csv(output_filename, index=False)
+print(f"Privacy layer execution complete! Saved masked enterprise dataset as '{output_filename}'.")
