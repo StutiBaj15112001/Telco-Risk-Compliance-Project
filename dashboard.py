@@ -5,7 +5,7 @@ import pandas as pd
 # Page Configuration
 st.set_page_config(page_title="Telco Risk & Compliance Dashboard", layout="wide")
 
-st.title("🛡️ Telco Operational Risk & Compliance Platform")
+st.title("Telco Operational Risk & Compliance Platform")
 st.markdown("**Author:** Data Science Portfolio Project | **Status:** Production-Ready Pipeline")
 st.markdown("---")
 
