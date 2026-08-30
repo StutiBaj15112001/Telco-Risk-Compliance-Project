@@ -1,26 +1,28 @@
 import pandas as pd
 import sqlite3
 
-# 1. Load our masked data from Phase 2
-print("Loading masked data...")
-df = pd.read_csv('telco_signups_masked.csv')
+# 1. Load the 50,000-row masked enterprise dataset
+print("Loading masked enterprise dataset...")
+df = pd.read_csv('telco_signups_advanced_masked.csv')
 
-# 2. Connect to a local SQLite database
-# This will automatically create a file named 'telco_data.db' in your folder
+# 2. Connect to the local SQLite database
 conn = sqlite3.connect('telco_data.db')
 cursor = conn.cursor()
 
-# 3. Load the DataFrame directly into a SQL table named 'customer_signups'
-# 'if_exists="replace"' means if you run this script again, it safely updates the table.
+# 3. Load the DataFrame into the SQL table
+print("Ingesting data into SQLite table 'customer_signups'...")
 df.to_sql('customer_signups', conn, if_exists='replace', index=False)
 
-print("Data successfully loaded into the SQL database table 'customer_signups'!")
+# 4. Verify record count and fraud risk distribution via SQL
+query_count = "SELECT COUNT(*) FROM customer_signups;"
+total_records = pd.read_sql(query_count, conn).iloc[0, 0]
 
-# 4. Write a quick test SQL query to verify it works
-# Let's count how many total rows we have in our database table
-query = "SELECT COUNT(*) FROM customer_signups;"
-result = pd.read_sql(query, conn)
-print(f"Total records in SQL Database: {result.iloc[0, 0]}")
+query_fraud = "SELECT Fraud_Risk_Flag, COUNT(*) as Count FROM customer_signups GROUP BY Fraud_Risk_Flag;"
+fraud_breakdown = pd.read_sql(query_fraud, conn)
 
-# 5. Close the database connection (best practice)
+print(f"Successfully loaded {total_records} records into the database!")
+print("\nFraud Risk Breakdown in Database:")
+print(fraud_breakdown)
+
+# 5. Close connection
 conn.close()
