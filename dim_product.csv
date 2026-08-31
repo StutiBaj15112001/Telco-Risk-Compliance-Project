@@ -1,0 +1,7 @@
+product_id,product_type,plan_tier,price
+1,5G Mobile Plan,Basic,45.0
+2,5G Mobile Plan,Essential,65.0
+3,5G Mobile Plan,Premium,95.0
+4,NBN Fixed Internet,Basic,70.0
+5,NBN Fixed Internet,NBN Standard,85.0
+6,NBN Fixed Internet,Premium,115.0

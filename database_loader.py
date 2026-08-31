@@ -1,28 +1,29 @@
-import pandas as pd
 import sqlite3
+import pandas as pd
 
-# 1. Load the 50,000-row masked enterprise dataset
-print("Loading masked enterprise dataset...")
-df = pd.read_csv('telco_signups_advanced_masked.csv')
+def load_data_to_sqlite():
+    # Connect to SQLite database (creates telco_enterprise.db)
+    conn = sqlite3.connect("telco_enterprise.db")
+    cursor = conn.cursor()
 
-# 2. Connect to the local SQLite database
-conn = sqlite3.connect('telco_data.db')
-cursor = conn.cursor()
+    # List of CSV files to load corresponding to our star schema
+    tables = {
+        "dim_office": "dim_office.csv",
+        "dim_team": "dim_team.csv",
+        "dim_product": "dim_product.csv",
+        "dim_employee": "dim_employee.csv",
+        "dim_customer": "dim_customer.csv",
+        "fact_call_transactions": "fact_call_transactions.csv"
+    }
 
-# 3. Load the DataFrame into the SQL table
-print("Ingesting data into SQLite table 'customer_signups'...")
-df.to_sql('customer_signups', conn, if_exists='replace', index=False)
+    for table_name, file_name in tables.items():
+        print(f"Loading {file_name} into table '{table_name}'...")
+        df = pd.read_csv(file_name)
+        df.to_sql(table_name, conn, if_exists="replace", index=False)
 
-# 4. Verify record count and fraud risk distribution via SQL
-query_count = "SELECT COUNT(*) FROM customer_signups;"
-total_records = pd.read_sql(query_count, conn).iloc[0, 0]
+    conn.commit()
+    conn.close()
+    print("Database loading complete. All 6 relational tables successfully created in 'telco_enterprise.db'.")
 
-query_fraud = "SELECT Fraud_Risk_Flag, COUNT(*) as Count FROM customer_signups GROUP BY Fraud_Risk_Flag;"
-fraud_breakdown = pd.read_sql(query_fraud, conn)
-
-print(f"Successfully loaded {total_records} records into the database!")
-print("\nFraud Risk Breakdown in Database:")
-print(fraud_breakdown)
-
-# 5. Close connection
-conn.close()
+if __name__ == "__main__":
+    load_data_to_sqlite()

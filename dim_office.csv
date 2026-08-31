@@ -1,0 +1,6 @@
+office_id,city,state,timezone
+1,Melbourne,VIC,AEST
+2,Sydney,NSW,AEST
+3,Brisbane,QLD,AEST
+4,Perth,WA,AWST
+5,Adelaide,SA,ACST
